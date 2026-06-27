@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "claim-engine"
+version = "1.0.0"
+description = "RAG-based Automated Insurance Claim Approval Engine (LangChain + Claude + Pinecone)"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Insurance Platform Engineering" }]
+keywords = ["insurance", "rag", "langchain", "claude", "pinecone", "hipaa", "llm"]
+
+# Runtime dependencies are tracked in requirements.txt for reproducible installs.
+dynamic = ["dependencies"]
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+python_files = ["test_*.py"]
+addopts = "-ra -q"
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "B", "C4", "SIM"]
+# UP045/UP007: we target Python 3.9 where Pydantic evaluates model field
+# annotations at runtime; PEP-604 unions (`X | None`) fail there, so we keep
+# the `Optional[...]` form. E501 (line length) is handled by the formatter.
+ignore = ["E501", "UP045", "UP007"]
+
+[tool.mypy]
+python_version = "3.9"
+warn_unused_ignores = true
+ignore_missing_imports = true
+check_untyped_defs = true
